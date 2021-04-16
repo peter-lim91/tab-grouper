@@ -1,4 +1,6 @@
-chrome.runtime.onInstalled.addListener();
+chrome.runtime.onStartup.addListener(() => {
+  console.log("startup listener fired");
+});
 
 let domainGroupIdList;
 
@@ -53,7 +55,9 @@ chrome.action.onClicked.addListener(handleGrouping);
 async function handleGrouping() {
   console.log(domainGroupIdList);
   const tabs = await chromeQuery({ currentWindow: true });
-  const groupedTabs = groupTabsByHostname(tabs);
+  console.log(tabs[0]);
+  const ungroupedTabs = filterGroupedTabs(tabs);
+  const groupedTabs = groupTabsByHostname(ungroupedTabs);
   groupedTabs.forEach(async (group) => {
     const hostname = group.hostname;
     const args = {};
@@ -120,4 +124,8 @@ function groupTabsByHostname(tabs) {
 function filterUniqueTabs(groupedTabs) {
   const filteredGroup = groupedTabs.filter((group) => group.tabs.length > 1);
   return filteredGroup;
+}
+
+function filterGroupedTabs(tabs) {
+  return tabs.filter((tab) => tab.groupId === -1);
 }
