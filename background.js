@@ -9,6 +9,14 @@ if (domainGroupIdList === undefined) {
   console.log(domainGroupIdList);
 }
 
+chrome.storage.onChanged.addListener((changes, namespace) => {
+  if (changes?.domainGroupIdList) {
+    domainGroupIdList = changes.domainGroupIdList.newValue;
+  }
+  console.log("changes", changes, "namespace", namespace);
+});
+
+//promisify chrome.tabs.query
 function chromeQuery(queryInfo) {
   return new Promise((resolve, reject) => {
     chrome.tabs.query(queryInfo, (tabs) => {
@@ -17,6 +25,7 @@ function chromeQuery(queryInfo) {
   });
 }
 
+//promisify chrome.tabs.group
 function chromeGroup(options) {
   return new Promise((resolve, reject) => {
     chrome.tabs.group(options, (groupId) => {
@@ -39,7 +48,9 @@ function deleteGroupId(groupId) {
   domainGroupIdList.splice(index, 1);
 }
 
-chrome.action.onClicked.addListener(async () => {
+chrome.action.onClicked.addListener(handleGrouping);
+
+async function handleGrouping() {
   console.log(domainGroupIdList);
   const tabs = await chromeQuery({ currentWindow: true });
   const groupedTabs = groupTabsByHostname(tabs);
@@ -67,7 +78,7 @@ chrome.action.onClicked.addListener(async () => {
     }
   });
   await saveToStorage();
-});
+}
 
 function saveToStorage() {
   return new Promise((resolve, reject) => {

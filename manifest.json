@@ -1,6 +1,7 @@
 {
   "name": "Tab Grouper",
   "version": "0.1",
+  "manifest_version": 3,
   "description": "Let's you group your chrome tabs by domain",
   "permissions": ["storage", "tabs", "tabGroups"],
   "background": {
@@ -21,5 +22,5 @@
     "48": "images/get_started48.png",
     "128": "images/get_started128.png"
   },
-  "manifest_version": 3
+  "options_page": "options.html"
 }
