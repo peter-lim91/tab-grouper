@@ -1,3 +1,6 @@
+import html from "./options.html";
+import css from "./styles.css";
+
 const debug = false;
 
 function addEventListeners() {

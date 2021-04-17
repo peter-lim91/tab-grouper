@@ -1,0 +1,29 @@
+{
+  "name": "tab-grouper",
+  "version": "1.0.0",
+  "description": "Current Limitations",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npx webpack --config webpack.config.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/peter-lim91/tab-grouper.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/peter-lim91/tab-grouper/issues"
+  },
+  "homepage": "https://github.com/peter-lim91/tab-grouper#readme",
+  "devDependencies": {
+    "file-loader": "^6.2.0",
+    "html-loader": "^2.1.2",
+    "html-webpack-plugin": "^5.3.1",
+    "json-loader": "^0.5.7",
+    "webpack": "^5.33.2",
+    "webpack-cli": "^4.6.0"
+  }
+}
