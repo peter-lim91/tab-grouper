@@ -46,42 +46,50 @@ async function checkChromeGroupStillExists(groupId) {
 }
 
 function deleteGroupId(groupId) {
-  const index = domainGroupIdList.findIndex((group) => group.id === groupId);
+  const index = domainGroupIdList.findIndex(
+    (group) => group.groupId === groupId
+  );
   domainGroupIdList.splice(index, 1);
 }
 
 chrome.action.onClicked.addListener(handleGrouping);
 
 async function handleGrouping() {
-  console.log(domainGroupIdList);
   const tabs = await chromeQuery({ currentWindow: true });
-  console.log(tabs[0]);
-  const ungroupedTabs = filterGroupedTabs(tabs);
-  const groupedTabs = groupTabsByHostname(ungroupedTabs);
-  groupedTabs.forEach(async (group) => {
-    const hostname = group.hostname;
+  // const ungroupedTabs = filterUngroupedTabs(tabs);
+  let sortedTabs = sortTabsByHostname(tabs);
+  sortedTabs = filterUniqueTabs(sortedTabs);
+  console.log(sortedTabs);
+  console.log("before", domainGroupIdList);
+  sortedTabs.forEach(async (hostnameGroup) => {
+    const hostname = hostnameGroup.hostname;
     const args = {};
 
     // check to see if group already exists both on extension side and chrome side.
     // if exists in both, use existing, if exists on extension side only, remove from extension and treat as new
     const groupId = getGroupIdByHostname(hostname); // extension side
-    const stillExists = await checkChromeGroupStillExists(groupId); // chrome side
+    const groupStillExists = await checkChromeGroupStillExists(groupId); // chrome side
     if (groupId) {
-      if (stillExists) {
+      if (groupStillExists) {
         args.groupId = groupId;
       }
-      if (!stillExists) {
+      if (!groupStillExists) {
         deleteGroupId(groupId);
       }
     }
-    args.tabIds = group.tabs.map((tab) => tab.id);
+    args.tabIds = hostnameGroup.tabs.map((tab) => tab.id);
     const newGroupId = await chromeGroup(args);
-    if (!groupId || !stillExists) {
+
+    //if it's an entirely new tab grouping
+    if (!groupId || !groupStillExists) {
+      //add to extension records
       domainGroupIdList.push({ hostname, groupId: newGroupId });
+      // collapse the group and give it a title
       chrome.tabGroups.update(newGroupId, { collapsed: true, title: hostname });
     }
   });
   await saveToStorage();
+  console.log("after", domainGroupIdList);
 }
 
 function saveToStorage() {
@@ -104,8 +112,8 @@ function getGroupIdByHostname(hostname) {
   })?.groupId;
 }
 
-function groupTabsByHostname(tabs) {
-  const groupedTabs = tabs.reduce((acc, tab) => {
+function sortTabsByHostname(tabs) {
+  const sortedTabs = tabs.reduce((acc, tab) => {
     const hostname = new URL(tab.url).hostname;
     const hostnameGroup = acc.find((t) => t.hostname === hostname);
     if (hostnameGroup) {
@@ -118,14 +126,14 @@ function groupTabsByHostname(tabs) {
     }
     return acc;
   }, []);
-  return filterUniqueTabs(groupedTabs);
+  return sortedTabs;
 }
 
-function filterUniqueTabs(groupedTabs) {
-  const filteredGroup = groupedTabs.filter((group) => group.tabs.length > 1);
+function filterUniqueTabs(sortedTabs) {
+  const filteredGroup = sortedTabs.filter((group) => group.tabs.length > 1);
   return filteredGroup;
 }
 
-function filterGroupedTabs(tabs) {
+function filterUngroupedTabs(tabs) {
   return tabs.filter((tab) => tab.groupId === -1);
 }
