@@ -8,14 +8,12 @@ if (domainGroupIdList === undefined) {
   chrome.storage.local.get("domainGroupIdList", (storage) => {
     domainGroupIdList = storage.domainGroupIdList || [];
   });
-  console.log(domainGroupIdList);
 }
 
 chrome.storage.onChanged.addListener((changes, namespace) => {
   if (changes?.domainGroupIdList) {
     domainGroupIdList = changes.domainGroupIdList.newValue;
   }
-  console.log("changes", changes, "namespace", namespace);
 });
 
 //promisify chrome.tabs.query
@@ -59,8 +57,6 @@ async function handleGrouping() {
   // const ungroupedTabs = filterUngroupedTabs(tabs);
   let sortedTabs = sortTabsByHostname(tabs);
   sortedTabs = filterUniqueTabs(sortedTabs);
-  console.log(sortedTabs);
-  console.log("before", domainGroupIdList);
   sortedTabs.forEach(async (hostnameGroup) => {
     const hostname = hostnameGroup.hostname;
     const args = {};
@@ -88,11 +84,10 @@ async function handleGrouping() {
       chrome.tabGroups.update(newGroupId, { collapsed: true, title: hostname });
     }
   });
-  await saveToStorage();
-  console.log("after", domainGroupIdList);
+  await saveToStorage(domainGroupIdList);
 }
 
-function saveToStorage() {
+function saveToStorage(domainGroupIdList) {
   return new Promise((resolve, reject) => {
     chrome.storage.local.set({ domainGroupIdList }, () => {
       resolve();
