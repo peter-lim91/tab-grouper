@@ -1,9 +1,9 @@
-const debug = true;
+const debug = false;
 
 function addEventListeners() {
   addButtonEventListener();
-  addSetIgnoreEventListener();
   if (debug) {
+    addSetIgnoreEventListener();
     addStorageEventListener();
   }
 }
@@ -27,7 +27,6 @@ function addStorageEventListener() {
 
 function addSetIgnoreEventListener() {
   const setIgnore = document.getElementById("set-ignore");
-  // console.log(setIgnore);
   setIgnore.addEventListener("click", setIgnoreList);
 }
 
@@ -55,4 +54,4 @@ async function getIgnoreList() {
 }
 
 addEventListeners();
-displayIgnoreList();
+// displayIgnoreList();

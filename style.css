@@ -1,0 +1,13 @@
+button {
+  margin: 2em;
+  border-radius: 5px;
+}
+
+div {
+  /* margin: 2em; */
+}
+
+body {
+  padding: 2em 4em;
+  margin: 0;
+}

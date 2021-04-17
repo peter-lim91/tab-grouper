@@ -65,6 +65,7 @@ async function handleGrouping() {
     // if exists in both, use existing, if exists on extension side only, remove from extension and treat as new
     const groupId = getGroupIdByHostname(hostname); // extension side
     const groupStillExists = await checkChromeGroupStillExists(groupId); // chrome side
+
     if (groupId) {
       if (groupStillExists) {
         args.groupId = groupId;
