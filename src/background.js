@@ -1,4 +1,4 @@
-import test from "./content";
+import { chromeQuery, chromeGroup } from "./utils";
 
 chrome.runtime.onStartup.addListener(() => {
   console.log("startup listener fired");
@@ -17,24 +17,6 @@ chrome.storage.onChanged.addListener((changes, namespace) => {
     domainGroupIdList = changes.domainGroupIdList.newValue;
   }
 });
-
-//promisify chrome.tabs.query
-function chromeQuery(queryInfo) {
-  return new Promise((resolve, reject) => {
-    chrome.tabs.query(queryInfo, (tabs) => {
-      resolve(tabs);
-    });
-  });
-}
-
-//promisify chrome.tabs.group
-function chromeGroup(options) {
-  return new Promise((resolve, reject) => {
-    chrome.tabs.group(options, (groupId) => {
-      resolve(groupId);
-    });
-  });
-}
 
 async function checkChromeGroupStillExists(groupId) {
   const allTabs = await chromeQuery({});
@@ -55,7 +37,6 @@ function deleteGroupId(groupId) {
 chrome.action.onClicked.addListener(handleGrouping);
 
 async function handleGrouping() {
-  test();
   const tabs = await chromeQuery({ currentWindow: true });
   // const ungroupedTabs = filterUngroupedTabs(tabs);
   let sortedTabs = sortTabsByHostname(tabs);

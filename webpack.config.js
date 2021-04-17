@@ -5,7 +5,6 @@ module.exports = {
   entry: {
     background: "./src/background.js",
     options: "./src/options.js",
-    webpack: "./src/webpack.js",
   },
   // entry: "./src/background.js",
   // plugins: [
