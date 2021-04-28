@@ -2,6 +2,8 @@
 
 ## A chrome extension that will automatically group all tabs by the domain name unless there is only one tab open for that domain.
 
+Currently available at https://chrome.google.com/webstore/detail/fkpmakflpdgeblkpdklpoohabkdghjpd
+
 Current Limitations
 
 - Will only group tabs in a single window.
